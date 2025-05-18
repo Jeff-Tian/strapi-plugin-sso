@@ -1,6 +1,9 @@
 {
-  "name": "strapi-plugin-sso",
-  "version": "1.0.6",
+  "name": "@jeff-tian/strapi-plugin-sso",
+  "publishConfig": {
+    "access": "public"
+  },
+  "version": "1.0.0",
   "description": "Plug-in for single sign-on with Strapi!",
   "strapi": {
     "displayName": "Single Sign On",
@@ -41,23 +44,23 @@
     "styled-components": "^6.0.0"
   },
   "author": {
-    "name": "yasudacloud",
-    "url": "https://github.com/yasudacloud/strapi-plugin-sso"
+    "name": "Jeff Tian (https://jefftian.dev)",
+    "url": "https://github.com/Jeff-Tian/strapi-plugin-sso"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/yasudacloud/strapi-plugin-sso"
+    "url": "https://github.com/Jeff-Tian/strapi-plugin-sso"
   },
   "bugs": {
-    "url": "https://github.com/yasudacloud/strapi-plugin-sso/issues"
+    "url": "https://github.com/Jeff-Tian/strapi-plugin-sso/issues"
   },
   "maintainers": [
     {
-      "name": "yasudacloud"
+      "name": "Jeff-Tian"
     }
   ],
   "engines": {
-    "node": ">=18.0.0 <=22.x.x",
+    "node": ">=18.0.0",
     "npm": ">=8.6.0"
   },
   "files": [
