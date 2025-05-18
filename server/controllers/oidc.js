@@ -96,6 +96,7 @@ const oidcSignInCallback = async (ctx) => {
         );
 
         console.log('userResponse = ', userResponse.data)
+        strapi.log.info(`userResponse = ${JSON.stringify(userResponse.data)}`)
         const email = (userResponse.data.email ?? userResponse.data.user.email) ?? ((userResponse.data.id ?? userResponse.data.user.id) + '@email-miss.' + (userResponse.data.userSource ?? 'unknown') + '.com');
 
         // whitelist check
