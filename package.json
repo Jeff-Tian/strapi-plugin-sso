@@ -17,7 +17,8 @@
     "watch:link": "strapi-plugin watch:link",
     "verify": "strapi-plugin verify",
     "test": "jest",
-    "lint": "eslint"
+    "lint": "eslint",
+    "prepublish": "strapi-plugin build"
   },
   "keywords": [
     "strapi",
