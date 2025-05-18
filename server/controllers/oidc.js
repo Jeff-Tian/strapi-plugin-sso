@@ -94,8 +94,9 @@ const oidcSignInCallback = async (ctx) => {
             userInfoEndpoint,
             userInfoEndpointHeaders
         );
-        
-        const email = userResponse.data.email ?? (userResponse.data.id + '@email-miss.' + (userResponse.data.userSource ?? 'unknown') + '.com');
+
+        console.log('userResponse = ', userResponse.data)
+        const email = (userResponse.data.email ?? userResponse.data.user.email) ?? ((userResponse.data.id ?? userResponse.data.user.id) + '@email-miss.' + (userResponse.data.userSource ?? 'unknown') + '.com');
 
         // whitelist check
         await whitelistService.checkWhitelistForEmail(email)
