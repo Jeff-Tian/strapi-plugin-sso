@@ -24,4 +24,8 @@ export default [...compat.extends("eslint:recommended"), {
     },
 
     rules: {},
+
+    env: {
+        jest: true
+    }
 }];
