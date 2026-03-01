@@ -49,7 +49,6 @@ const oidcSignInCallback = async (ctx) => {
     const config = configValidation()
     const httpClient = axios.create()
     const userService = strapi.service('admin::user')
-    const tokenService = strapi.service('admin::token')
     const oauthService = strapi.plugin('strapi-plugin-sso').service('oauth')
     const roleService = strapi.plugin('strapi-plugin-sso').service('role')
     const whitelistService = strapi.plugin('strapi-plugin-sso').service('whitelist')
@@ -95,8 +94,6 @@ const oidcSignInCallback = async (ctx) => {
             userInfoEndpointHeaders
         );
 
-        console.log('userResponse = ', userResponse.data)
-        strapi.log.info(`userResponse = ${JSON.stringify(userResponse.data)}`)
         const email = userResponse.data.email ?? ((userResponse.data.id ?? userResponse.data.sub) + '@email-miss.' + (userResponse.data.userSource ?? 'unknown') + '.com');
 
         // whitelist check

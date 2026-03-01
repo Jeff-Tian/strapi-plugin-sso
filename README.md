@@ -29,13 +29,13 @@ Please use version 1.0.7 or later when working with Strapi 5.24.1 or above.
 # Easy to install
 
 ```shell
-pnpm add strapi-plugin-sso
+pnpm add @jeff-tian/strapi-plugin-sso
 ```
 
 or
 
 ```shell
-npm i strapi-plugin-sso
+npm i @jeff-tian/strapi-plugin-sso
 ```
 
 # Requirements
