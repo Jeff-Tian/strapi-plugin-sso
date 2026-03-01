@@ -21,24 +21,43 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4.2.2
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-      - run: rm -rf node_modules && npm i --save-peer
-      - run: npm run build --if-present
-      - run: npm run test
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run build
+      - run: pnpm run test
 
 
   release:
     needs: [ build ]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+      id-token: write
     steps:
       - uses: actions/checkout@v4.2.2
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 'lts/*'
-      - run: npm i -g yarn && yarn install
-      - run: GITHUB_TOKEN=${{secrets.GITHUB_TOKEN}} NPM_TOKEN=${{secrets.NPM_TOKEN}} npx semantic-release --allow-same-version
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm dlx semantic-release --allow-same-version
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_CONFIG_PROVENANCE: true
 

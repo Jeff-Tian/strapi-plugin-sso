@@ -22,18 +22,20 @@ Please read the [documents](#user-content-documentationenglish) for some precaut
 | NodeJS          | Strapi | strapi-plugin-sso |
 |-----------------|--------|-------------------|
 | 16.0.0 - 21.0.0 | v4     | 0.\*.\*           |
-| 18.0.0 - 22.0.0 | v5     | 1.\*.\*           |
+| 18.0.0 - 24.0.0 | v5     | 1.\*.\*           |
+
+Please use version 1.0.7 or later when working with Strapi 5.24.1 or above.
 
 # Easy to install
 
 ```shell
-yarn add strapi-plugin-sso
+pnpm add @jeff-tian/strapi-plugin-sso
 ```
 
 or
 
 ```shell
-npm i strapi-plugin-sso
+npm i @jeff-tian/strapi-plugin-sso
 ```
 
 # Requirements

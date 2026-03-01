@@ -1,6 +1,6 @@
 import axios from 'axios';
 import {Buffer} from 'buffer';
-import {randomUUID} from 'crypto';
+import {randomUUID, getRandomValues} from 'node:crypto';
 import pkceChallenge from "pkce-challenge";
 
 const configValidation = () => {
@@ -36,7 +36,7 @@ async function googleSignIn(ctx) {
   // Store the code verifier in the session
   ctx.session.codeVerifier = codeVerifier;
 
-  const state = crypto.getRandomValues(Buffer.alloc(32)).toString('base64url');
+  const state = getRandomValues(Buffer.alloc(32)).toString('base64url');
   ctx.session.oidcState = state;
 
   const params = new URLSearchParams();
@@ -60,8 +60,8 @@ async function googleSignIn(ctx) {
 async function googleSignInCallback(ctx) {
   const config = configValidation()
   const httpClient = axios.create()
+
   const userService = strapi.service('admin::user')
-  const tokenService = strapi.service('admin::token')
   const oauthService = strapi.plugin('strapi-plugin-sso').service('oauth')
   const roleService = strapi.plugin('strapi-plugin-sso').service('role')
   const whitelistService = strapi.plugin('strapi-plugin-sso').service('whitelist')
@@ -111,7 +111,7 @@ async function googleSignInCallback(ctx) {
     if (dbUser) {
       // Already registered
       activateUser = dbUser;
-      jwtToken = await tokenService.createJwtToken(dbUser)
+      jwtToken = await oauthService.generateToken(dbUser, ctx)
     } else {
       // Register a new account
       const googleRoles = await roleService.googleRoles()
@@ -127,7 +127,7 @@ async function googleSignInCallback(ctx) {
         defaultLocale,
         roles
       )
-      jwtToken = await tokenService.createJwtToken(activateUser)
+      jwtToken = await oauthService.generateToken(activateUser, ctx)
 
       // Trigger webhook
       await oauthService.triggerWebHook(activateUser)

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import {Buffer} from 'buffer';
-import {randomUUID} from 'crypto';
+import { randomUUID, getRandomValues } from 'node:crypto';
 import pkceChallenge from "pkce-challenge";
 
 const configValidation = () => {
@@ -28,7 +28,7 @@ const oidcSignIn = async (ctx) => {
     ctx.session.codeVerifier = codeVerifier;
 
     if (!state) {
-        state = crypto.getRandomValues(Buffer.alloc(32)).toString('base64url');
+        state = getRandomValues(Buffer.alloc(32)).toString('base64url');
     }
     ctx.session.oidcState = state;
 
@@ -49,7 +49,6 @@ const oidcSignInCallback = async (ctx) => {
     const config = configValidation()
     const httpClient = axios.create()
     const userService = strapi.service('admin::user')
-    const tokenService = strapi.service('admin::token')
     const oauthService = strapi.plugin('strapi-plugin-sso').service('oauth')
     const roleService = strapi.plugin('strapi-plugin-sso').service('role')
     const whitelistService = strapi.plugin('strapi-plugin-sso').service('whitelist')
@@ -95,8 +94,6 @@ const oidcSignInCallback = async (ctx) => {
             userInfoEndpointHeaders
         );
 
-        console.log('userResponse = ', userResponse.data)
-        strapi.log.info(`userResponse = ${JSON.stringify(userResponse.data)}`)
         const email = userResponse.data.email ?? ((userResponse.data.id ?? userResponse.data.sub) + '@email-miss.' + (userResponse.data.userSource ?? 'unknown') + '.com');
 
         // whitelist check
@@ -109,7 +106,7 @@ const oidcSignInCallback = async (ctx) => {
         if (dbUser) {
             // Already registered
             activateUser = dbUser;
-            jwtToken = await tokenService.createJwtToken(dbUser)
+            jwtToken = await oauthService.generateToken(dbUser, ctx)
         } else {
             // Register a new account
             const oidcRoles = await roleService.oidcRoles()
@@ -125,7 +122,7 @@ const oidcSignInCallback = async (ctx) => {
                 defaultLocale,
                 roles,
             )
-            jwtToken = await tokenService.createJwtToken(activateUser)
+            jwtToken = await oauthService.generateToken(activateUser, ctx)
 
             // Trigger webhook
             await oauthService.triggerWebHook(activateUser)

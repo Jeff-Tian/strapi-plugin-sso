@@ -1,6 +1,6 @@
 import axios from 'axios';
 import {Buffer} from 'buffer';
-import {randomUUID} from 'crypto';
+import {randomUUID, getRandomValues} from 'node:crypto';
 import pkceChallenge from "pkce-challenge";
 
 const configValidation = () => {
@@ -38,7 +38,7 @@ async function cognitoSignIn(ctx) {
   // Store the code verifier in the session
   ctx.session.codeVerifier = codeVerifier;
 
-  const state = crypto.getRandomValues(Buffer.alloc(32)).toString('base64url');
+  const state = getRandomValues(Buffer.alloc(32)).toString('base64url');
   ctx.session.oidcState = state;
 
   const params = new URLSearchParams();
@@ -57,7 +57,6 @@ async function cognitoSignIn(ctx) {
 async function cognitoSignInCallback(ctx) {
   const config = configValidation()
   const userService = strapi.service('admin::user')
-  const tokenService = strapi.service('admin::token')
   const oauthService = strapi.plugin('strapi-plugin-sso').service('oauth')
   const roleService = strapi.plugin('strapi-plugin-sso').service('role')
   const whitelistService = strapi.plugin('strapi-plugin-sso').service('whitelist')
@@ -113,7 +112,7 @@ async function cognitoSignInCallback(ctx) {
 
     if (dbUser) {
       activateUser = dbUser;
-      jwtToken = await tokenService.createJwtToken(dbUser)
+      jwtToken = await oauthService.generateToken(dbUser, ctx)
     } else {
       const cognitoRoles = await roleService.cognitoRoles()
       const roles = cognitoRoles && cognitoRoles['roles'] ? cognitoRoles['roles'].map(role => ({
@@ -128,7 +127,7 @@ async function cognitoSignInCallback(ctx) {
         defaultLocale,
         roles
       )
-      jwtToken = await tokenService.createJwtToken(activateUser)
+      jwtToken = await oauthService.generateToken(activateUser, ctx)
 
       // Trigger webhook
       await oauthService.triggerWebHook(activateUser)
