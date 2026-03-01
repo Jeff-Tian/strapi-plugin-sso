@@ -29,7 +29,7 @@ Please use version 1.0.7 or later when working with Strapi 5.24.1 or above.
 # Easy to install
 
 ```shell
-yarn add strapi-plugin-sso
+pnpm add strapi-plugin-sso
 ```
 
 or
